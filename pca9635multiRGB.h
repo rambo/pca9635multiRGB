@@ -5,7 +5,8 @@
 #include <pca9635.h>
 #include <pca9635RGB.h>
 
-class pca9635multiRGB : public pca9635RGB
+//class pca9635multiRGB : public pca9635RGB
+class pca9635multiRGB
 {
     public:
         // Initialize the object and chip        

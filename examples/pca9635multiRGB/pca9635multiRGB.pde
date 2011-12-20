@@ -15,7 +15,7 @@
 #include <pca9635multiRGB.h>
 
 // Container for the device
-pca9635RGB driverboard;
+//pca9635multiRGB driverboard;
 
 void setup()
 {
@@ -27,7 +27,7 @@ void setup()
 
     // Set device address and call I2c.begin()
     Serial.println("Initializing led drivers");
-    driverboard.begin(1, 5);
+    //driverboard.begin(1, 5, false);
 
     /**
      * TODO: make some way to pass calls to invidual boards without keeping instances for all of them
@@ -41,7 +41,10 @@ void setup()
     driverboard.B.dump_registers(0x14, 0x17);
     */
 
-
+    PCA9635.reset(); // This should reset all drivers on the bus
+    PCA9635.set_sleep(0x0); // Wake up oscillators (via all-call)
+    PCA9635.set_driver_mode(0x0); // Default to open-drain mode for all drivers (via all-call)
+    PCA9635.set_led_mode(3); // Default to PWM mode for all drivers (via all-call)
 
     Serial.println("Booted");
 }
@@ -49,6 +52,12 @@ void setup()
 const byte test_leds_max = 8;
 void loop()
 {
+    for (byte ledno = 0; ledno < 16; ledno++)
+    {
+        PCA9635.set_led_pwm(ledno, 255);
+        delay(250);
+        PCA9635.set_led_pwm(ledno, 0);
+    }
     /**
      * TODO: some test loop
     for (byte ledno = 0; ledno < test_leds_max; ledno++)

@@ -1,11 +1,10 @@
-#include "pca963multi5RGB.h"
+#include "pca9635multiRGB.h"
 
 /**
  * board_num is the number selected on the BCD rotary switch
  */
-void pca9635RGB::begin(byte first_board, byte last_board, boolean wire_begin)
+void pca9635multiRGB::begin(byte first_board, byte last_board, boolean wire_begin)
 {
-    return false;
     /**
      * TODO: figure out a good way to handle multiple boards
     if (wire_begin)
@@ -28,18 +27,21 @@ void pca9635RGB::begin(byte first_board, byte last_board, boolean wire_begin)
 }
 
 // Funky way to handle default arguments
-void pca9635RGB::begin(byte first_board, byte last_board)
+void pca9635multiRGB::begin(byte first_board, byte last_board)
 {
-    pca9635RGB::begin(first_board, last_board, true);
+    pca9635multiRGB::begin(first_board, last_board, true);
 }
 
-boolean pca9635RGB::set_rgb(byte ledno, byte rcycle, byte gcycle, byte bcycle)
+boolean pca9635multiRGB::set_rgb(byte ledno, byte rcycle, byte gcycle, byte bcycle)
 {
+    return false;
     // TODO: When I2C library allows lower level access write as single repeated-start sequence for atomicity
+    /*
     boolean rstat = R.set_led_pwm(ledno, rcycle);
     boolean gstat = G.set_led_pwm(ledno, gcycle);
     boolean bstat = B.set_led_pwm(ledno, bcycle);
     return rstat && gstat && bstat;
+    */
 }
 
 /*
