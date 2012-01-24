@@ -9,11 +9,11 @@ class pca9635multiRGB : public pca9635RGB
 {
     public:
         // Initialize the object and chip        
-        void begin(uint8_t first_board, byte last_board, uint8_t wire_begin);
+        void begin(byte first_board, byte last_board, boolean wire_begin);
         // A funky way to handle optional arguments
-        void begin(uint8_t first_board, byte last_board);
+        void begin(byte first_board, byte last_board);
         void begin();
-        uint8_t set_rgb(uint8_t ledno, byte rcycle, byte gcycle, byte bcycle);
+        boolean set_rgb(byte ledno, byte rcycle, byte gcycle, byte bcycle);
         
 };
 
