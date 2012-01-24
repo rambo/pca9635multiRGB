@@ -3,7 +3,7 @@
 /**
  * board_num is the number selected on the BCD rotary switch
  */
-void pca9635RGB::begin(byte first_board, byte last_board, boolean wire_begin)
+void pca9635RGB::begin(uint8_t first_board, byte last_board, uint8_t wire_begin)
 {
     return false;
     /**
@@ -28,22 +28,22 @@ void pca9635RGB::begin(byte first_board, byte last_board, boolean wire_begin)
 }
 
 // Funky way to handle default arguments
-void pca9635RGB::begin(byte first_board, byte last_board)
+void pca9635RGB::begin(uint8_t first_board, byte last_board)
 {
     pca9635RGB::begin(first_board, last_board, true);
 }
 
-boolean pca9635RGB::set_rgb(byte ledno, byte rcycle, byte gcycle, byte bcycle)
+uint8_t pca9635RGB::set_rgb(uint8_t ledno, byte rcycle, byte gcycle, byte bcycle)
 {
     // TODO: When I2C library allows lower level access write as single repeated-start sequence for atomicity
-    boolean rstat = R.set_led_pwm(ledno, rcycle);
-    boolean gstat = G.set_led_pwm(ledno, gcycle);
-    boolean bstat = B.set_led_pwm(ledno, bcycle);
+    uint8_t rstat = R.set_led_pwm(ledno, rcycle);
+    uint8_t gstat = G.set_led_pwm(ledno, gcycle);
+    uint8_t bstat = B.set_led_pwm(ledno, bcycle);
     return rstat && gstat && bstat;
 }
 
 /*
-pca9635::set_led_pwm(byte ledno, byte cycle)
+pca9635::set_led_pwm(uint8_t ledno, byte cycle)
 {
 
 */
