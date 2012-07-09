@@ -68,7 +68,7 @@ void setup()
     Serial.println("Booted");
 }
 
-const byte test_leds_max = 16*BOARD_COUNT;
+const byte test_leds_max = 16*BOARD_COUNT*3;
 byte ledno=255;
 byte bstate;
 void loop()
