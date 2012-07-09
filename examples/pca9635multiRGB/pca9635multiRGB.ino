@@ -14,12 +14,24 @@
 #include <pca9635RGB.h> // For some weird reason including this in the relevant .h file does not work
 #include <pca9635multiRGB.h>
 
+// Config defines
+#define BOARD_COUNT 5
+#define TEST_PWM 140
+
+// Switch to change led to test
+#include <Bounce.h>
+#define SWITCHPIN 2
+Bounce bouncer = Bounce(SWITCHPIN, 250); 
+
 // Container for the device
-//pca9635multiRGB driverboard;
+pca9635multiRGB multirgb;
 
 void setup()
 {
     Serial.begin(115200);
+    pinMode(SWITCHPIN, INPUT);          
+    digitalWrite(SWITCHPIN, HIGH); // pull-up
+
     I2c.begin();
     I2c.timeOut(500); // 500ms timeout to avoid lockups
     I2c.pullup(false); //Disable internal pull-ups
@@ -27,82 +39,72 @@ void setup()
 
     // Set device address and call I2c.begin()
     Serial.println("Initializing led drivers");
-    //driverboard.begin(1, 5, false);
+    multirgb.begin(5, true);
+
+
+    // Dump the board register to verify
+    for (byte i=0; i<board_count; i++)
+    {
+        multirgb.set_board_no(i);
+        multirgb.board_instance.R.dump_registers(0x0, 0x01);
+        multirgb.board_instance.G.dump_registers(0x0, 0x01);
+        multirgb.board_instance.B.dump_registers(0x0, 0x01);
+        // Dump the led mode registers to check they're correct
+        multirgb.board_instance.R.dump_registers(0x14, 0x17);
+        multirgb.board_instance.G.dump_registers(0x14, 0x17);
+        multirgb.board_instance.B.dump_registers(0x14, 0x17);
+        
+    }
 
     /**
-     * TODO: make some way to pass calls to invidual boards without keeping instances for all of them
-    // Dump the driver mode registers to check they're correct
-    driverboard.R.dump_registers(0x0, 0x01);
-    driverboard.G.dump_registers(0x0, 0x01);
-    driverboard.B.dump_registers(0x0, 0x01);
-    // Dump the led mode registers to check they're correct
-    driverboard.R.dump_registers(0x14, 0x17);
-    driverboard.G.dump_registers(0x14, 0x17);
-    driverboard.B.dump_registers(0x14, 0x17);
-    */
-
+     * The init will take care of this
+     *
     PCA9635.reset(); // This should reset all drivers on the bus
     PCA9635.set_sleep(0x0); // Wake up oscillators (via all-call)
     PCA9635.set_driver_mode(0x0); // Default to open-drain mode for all drivers (via all-call)
     PCA9635.set_led_mode(3); // Default to PWM mode for all drivers (via all-call)
+     */
 
     Serial.println("Booted");
 }
 
-const byte test_leds_max = 8;
+const byte test_leds_max = 16*BOARD_COUNT;
+byte ledno=255;
+byte bstate;
 void loop()
 {
-    for (byte ledno = 0; ledno < 16; ledno++)
+    if (bouncer.update())
     {
-        PCA9635.set_led_pwm(ledno, 255);
-        delay(250);
-        PCA9635.set_led_pwm(ledno, 0);
-    }
-    /**
-     * TODO: some test loop
-    for (byte ledno = 0; ledno < test_leds_max; ledno++)
-    {
-        Serial.print("Turning on R led ");
-        Serial.println(ledno, DEC);
-        //driverboard.R.set_led_mode(ledno, 1);
-        driverboard.R.set_led_pwm(ledno, 255);
-        delay(250);
-        Serial.print("Turning off R led ");
-        Serial.println(ledno, DEC);
-        driverboard.R.set_led_pwm(ledno, 0);
-        //driverboard.R.set_led_mode(ledno, 0);
-        Serial.print("Turning on G led ");
-        Serial.println(ledno, DEC);
-        //driverboard.G.set_led_mode(ledno, 1);
-        driverboard.G.set_led_pwm(ledno, 255);
-        delay(250);
-        Serial.print("Turning off G led ");
-        Serial.println(ledno, DEC);
-        driverboard.G.set_led_pwm(ledno, 0);
-        //driverboard.G.set_led_mode(ledno, 0);
-        Serial.print("Turning on B led ");
-        Serial.println(ledno, DEC);
-        //driverboard.B.set_led_mode(ledno, 1);
-        driverboard.B.set_led_pwm(ledno, 255);
-        delay(250);
-        Serial.print("Turning off B led ");
-        Serial.println(ledno, DEC);
-        driverboard.B.set_led_pwm(ledno, 0);
-        //driverboard.B.set_led_mode(ledno, 0);
-    }
-    delay(500);
-    for (byte ledno = 0; ledno < test_leds_max; ledno++)
-    {
-        Serial.print("RGB Fading out led ");
-        Serial.println(ledno, DEC);
-        for (byte value=128; value > 0; value--)
+        bstate = bouncer.read();
+        Serial.print("State ");
+        Serial.println(bstate, DEC);
+        if (bstate)
         {
-            driverboard.set_rgb(ledno, value, value, value);
-            delay(5);
+            Serial.print("Turning OFF led ");
+            Serial.println(ledno, DEC);
+            multirgb.set_rgb(ledno/3, 0, 0, 0);
+
+
+    
+            ledno++;
+            ledno = ledno % test_leds_max;
+    
+            Serial.print("Turning ON led ");
+            Serial.println(ledno, DEC);
+
+            switch (ledno%3)
+            {
+                case 0:
+                    multirgb.set_rgb(ledno/3, TEST_PWM, 0, 0);
+                    break;
+                case 1:
+                    multirgb.set_rgb(ledno/3, 0, TEST_PWM, 0);
+                    break;
+                case 2:
+                    multirgb.set_rgb(ledno/3, 0, 0, TEST_PWM);
+                    break;
+            }
+            
         }
-        driverboard.set_rgb(ledno, 0x0, 0x0, 0x0);
-        delay(250);
     }
-    delay(500);
-     */
 }
