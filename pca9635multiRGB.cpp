@@ -44,8 +44,19 @@ void pca9635multiRGB::set_board_no(byte board)
 
 boolean pca9635multiRGB::set_rgb(byte ledno, byte rcycle, byte gcycle, byte bcycle)
 {
-    this->set_board_no(ledno % this->board_count);
+
+    byte board_no = (ledno/16) % this->board_count;
+    this->set_board_no(board_no);
     byte real_ledno = ledno % 16;
+
+    Serial.print("pca9635multiRGB::set_rgb ledno=");
+    Serial.println(ledno, DEC);
+    Serial.print("pca9635multiRGB::set_rgb board_no=");
+    Serial.println(board_no, DEC);
+    Serial.print("pca9635multiRGB::set_rgb real_ledno=");
+    Serial.println(real_ledno, DEC);
+
+
     return this->board_instance.set_rgb(real_ledno, rcycle, gcycle, bcycle);
 }
 

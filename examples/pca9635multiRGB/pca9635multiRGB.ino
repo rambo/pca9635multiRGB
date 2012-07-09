@@ -16,7 +16,7 @@
 
 // Config defines
 #define BOARD_COUNT 5
-#define TEST_PWM 140
+#define TEST_PWM 90
 
 // Switch to change led to test
 #include <Bounce.h>
@@ -82,10 +82,19 @@ void loop()
         {
             Serial.print("Turning OFF led ");
             Serial.println(ledno, DEC);
-            multirgb.set_rgb(ledno/3, 0, 0, 0);
+            switch (ledno%3)
+            {
+                case 0:
+                    multirgb.set_rgb(ledno/3, 0, 0, 0);
+                    break;
+                case 1:
+                    multirgb.set_rgb(ledno/3, 0, 0, 0);
+                    break;
+                case 2:
+                    multirgb.set_rgb(ledno/3, 0, 0, 0);
+                    break;
+            }
 
-
-    
             ledno++;
             ledno = ledno % test_leds_max;
     
