@@ -1,6 +1,6 @@
 // safety againts double-include
-#ifndef pca9635RGB_h
-#define pca9635RGB_h
+#ifndef pca9635multiRGB_h
+#define pca9635multiRGB_h
 #include <Arduino.h> 
 #include <pca9635.h>
 #include <pca9635RGB.h>
@@ -14,10 +14,11 @@ class pca9635multiRGB
         // A funky way to handle optional arguments
         void begin(byte board_count);
         void begin();
+        void set_board_no(byte board);
         boolean set_rgb(byte ledno, byte rcycle, byte gcycle, byte bcycle);
-
-    private:
         pca9635RGB board_instance;
+
+    protected:
         byte current_board_num;
         byte first_board;
         byte last_board;

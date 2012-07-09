@@ -18,9 +18,9 @@ void pca9635multiRGB::begin(byte board_count, boolean wire_begin)
     // Initialize each board
     for (byte i=0; i<board_count; i++)
     {
-        this->board_instance->begin(i, false, false);
+        this->board_instance.begin(i, false, false);
     }
-    this->board_instance->set_board_address(0);
+    this->board_instance.set_board_address(0);
     this->current_board_num = 0;
     this->board_count = board_count;
 }
@@ -37,7 +37,7 @@ void pca9635multiRGB::set_board_no(byte board)
     {
         return;
     }
-    this->board_instance->set_board_address(board);
+    this->board_instance.set_board_address(board);
     this->current_board_num = board;
 }
 
@@ -46,6 +46,6 @@ boolean pca9635multiRGB::set_rgb(byte ledno, byte rcycle, byte gcycle, byte bcyc
 {
     this->set_board_no(ledno % this->board_count);
     byte real_ledno = ledno % 16;
-    return this->set_rgb(real_ledno, rcycle, gcycle, bcycle);
+    return this->board_instance.set_rgb(real_ledno, rcycle, gcycle, bcycle);
 }
 

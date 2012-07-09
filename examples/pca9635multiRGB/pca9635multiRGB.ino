@@ -43,7 +43,7 @@ void setup()
 
 
     // Dump the board register to verify
-    for (byte i=0; i<board_count; i++)
+    for (byte i=0; i<BOARD_COUNT; i++)
     {
         multirgb.set_board_no(i);
         multirgb.board_instance.R.dump_registers(0x0, 0x01);
