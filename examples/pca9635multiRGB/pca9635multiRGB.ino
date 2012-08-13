@@ -16,7 +16,7 @@
 
 // Config defines
 #define BOARD_COUNT 5
-#define TEST_PWM 90
+#define TEST_PWM 50
 
 // Switch to change led to test
 #include <Bounce.h>
@@ -38,7 +38,7 @@ void setup()
     I2c.setSpeed(true); // Fast-mode support
 
     // Set device address and call I2c.begin()
-    Serial.println("Initializing led drivers");
+    Serial.println(F("Initializing led drivers"));
     multirgb.begin(5, true);
 
 
@@ -65,22 +65,23 @@ void setup()
     PCA9635.set_led_mode(3); // Default to PWM mode for all drivers (via all-call)
      */
 
-    Serial.println("Booted");
+    Serial.println(F("Booted"));
 }
 
 const byte test_leds_max = 16*BOARD_COUNT*3;
 byte ledno=255;
+//byte ledno=(16*3*2)-1; // start at third board
 byte bstate;
 void loop()
 {
     if (bouncer.update())
     {
         bstate = bouncer.read();
-        Serial.print("State ");
+        Serial.print(F("State "));
         Serial.println(bstate, DEC);
         if (bstate)
         {
-            Serial.print("Turning OFF led ");
+            Serial.print(F("Turning OFF led "));
             Serial.println(ledno, DEC);
             switch (ledno%3)
             {
@@ -98,7 +99,7 @@ void loop()
             ledno++;
             ledno = ledno % test_leds_max;
     
-            Serial.print("Turning ON led ");
+            Serial.print(F("Turning ON led "));
             Serial.println(ledno, DEC);
 
             switch (ledno%3)
